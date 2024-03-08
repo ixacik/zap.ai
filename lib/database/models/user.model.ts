@@ -17,7 +17,7 @@ const UserSchema = new Schema({
   lastName: { type: String, required: true },
   photo: { type: String, required: true },
   planId: { type: String },
-  creditBalance: { type: Number },
+  creditBalance: { type: Number, default: 10 },
 });
 
 const User = models?.User || model("User", UserSchema);

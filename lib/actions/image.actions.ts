@@ -153,3 +153,36 @@ export async function getAllImages({
     handleError(error);
   }
 }
+
+// get user images
+export async function getUserImages({
+  limit = 9,
+  page = 1,
+  userId,
+}: {
+  limit?: number;
+  page: number;
+  userId: string;
+}) {
+  try {
+    await connectToDatabase();
+
+    const skipAmount = (page - 1) * limit;
+
+    const images = await populateUser(Image.find({ author: userId }))
+      .sort({ updatedAt: -1 })
+      .skip(skipAmount)
+      .limit(limit);
+
+    const totalImages = await Image.find({ author: userId }).countDocuments();
+    const savedImages = await Image.find().countDocuments();
+
+    return {
+      data: JSON.parse(JSON.stringify(images)),
+      totalPage: Math.ceil(totalImages / limit),
+      savedImages,
+    };
+  } catch (error) {
+    handleError(error);
+  }
+}
